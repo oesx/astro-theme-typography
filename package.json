@@ -24,7 +24,7 @@
     "@astrojs/solid-js": "^5.0.3",
     "@astrojs/tailwind": "^5.0.0",
     "@auth/core": "^0.37.4",
-    "@simplewebauthn/browser": "^8.3.7",
+    "@simplewebauthn/browser": "^13.1.0",
     "@simplewebauthn/server": "^13.1.0",
     "astro": "^4.0.0",
     "astro-seo": "^0.8.0",
