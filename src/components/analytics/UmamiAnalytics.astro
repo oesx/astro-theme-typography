@@ -1,0 +1,19 @@
+---
+interface Props {
+  id: string
+}
+
+const { id } = Astro.props
+
+---
+
+{
+  id && (
+    <script
+      async
+      defer
+      data-website-id={id}
+      src="https://analytics.umami.is/script.js"
+    />
+  )
+}

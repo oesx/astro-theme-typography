@@ -1,0 +1,48 @@
+---
+import { getCollection } from 'astro:content'
+import Layout from '@/layouts/LayoutDefault.astro'
+import { formatDate } from '@/utils'
+
+const posts = await getCollection('posts', ({ data }) => {
+  return !data.draft
+})
+
+posts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+---
+
+<Layout title="关于">
+  <div class="mx-auto max-w-3xl px-4">
+    <h1 class="mb-8 text-2xl font-bold">关于</h1>
+
+    <div class="prose dark:prose-invert">
+      <p>这是一个基于 Astro 的博客主题。</p>
+      <p>特点：</p>
+      <ul>
+        <li>支持暗色模式</li>
+        <li>支持 RSS</li>
+        <li>支持评论系统</li>
+        <li>支持统计分析</li>
+        <li>支持国际化</li>
+      </ul>
+    </div>
+
+    <h2 class="mb-4 mt-8 text-xl font-bold">最新文章</h2>
+    <ul class="space-y-4">
+      {
+        posts.slice(0, 5).map((post) => (
+          <li>
+            <a
+              href={`/posts/${post.slug}/`}
+              class="text-primary hover:text-primary-dark"
+            >
+              {post.data.title}
+            </a>
+            <span class="ml-2 text-sm text-gray-500">
+              {formatDate(post.data.pubDate)}
+            </span>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</Layout>

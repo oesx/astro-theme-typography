@@ -1,0 +1,59 @@
+---
+import { config } from '../../.config/user'
+import SiteFooter from '@/components/SiteFooter.astro'
+import SiteNavigation from '@/components/SiteNavigation.astro'
+import SiteSeo from '@/components/SiteSeo.astro'
+import SiteTitle from '@/components/SiteTitle.astro'
+import ThemeScript from '@/components/ThemeScript.astro'
+import ThemeToggle from '@/components/ThemeToggle.astro'
+import '~/styles/global.css'
+
+interface Props {
+  title?: string
+  description?: string
+  image?: string
+  type?: string
+}
+
+const {
+  title = config.site.title,
+  description = config.site.description,
+  image,
+  type = 'website',
+} = Astro.props
+---
+
+<!doctype html>
+<html lang={config.site.lang}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <SiteSeo {title} {description} {image} {type} />
+    <ThemeScript />
+  </head>
+  <body>
+    <div class="mx-auto max-w-3xl px-4 py-8">
+      <header class="mb-8">
+        <nav class="flex items-center justify-between">
+          <SiteTitle />
+          <div class="flex items-center space-x-4">
+            <SiteNavigation />
+            <ThemeToggle />
+          </div>
+        </nav>
+      </header>
+
+      <main class="py-8">
+        <slot />
+      </main>
+
+      <SiteFooter />
+    </div>
+
+    <script>
+      // Add animation class after page load
+      document.documentElement.classList.add('animation-prepared')
+    </script>
+  </body>
+</html>

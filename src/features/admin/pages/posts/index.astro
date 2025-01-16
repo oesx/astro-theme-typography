@@ -1,0 +1,79 @@
+---
+import { getSession } from 'auth-astro/server'
+import AdminLayout from '../../../layouts/AdminLayout.astro'
+
+const session = await getSession(Astro.request)
+if (!session) {
+  return Astro.redirect('/auth/login')
+}
+
+// 獲取所有文章
+const posts = await Astro.glob('../../../content/posts/*.md')
+---
+
+<AdminLayout title="文章管理">
+  <div class="p-6">
+    <div class="mb-6 flex items-center justify-between">
+      <h1 class="text-2xl font-bold">文章管理</h1>
+      <a
+        href="/admin/posts/new"
+        class="rounded-md bg-primary px-4 py-2 text-white hover:bg-primary/90"
+      >
+        新建文章
+      </a>
+    </div>
+
+    <div class="overflow-hidden rounded-lg bg-white shadow">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th
+              scope="col"
+              class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+            >
+              標題
+            </th>
+            <th
+              scope="col"
+              class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+            >
+              日期
+            </th>
+            <th
+              scope="col"
+              class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+            >
+              操作
+            </th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200 bg-white">
+          {
+            posts.map((post) => (
+              <tr>
+                <td class="whitespace-nowrap px-6 py-4">
+                  <div class="text-sm font-medium text-gray-900">
+                    {post.frontmatter.title}
+                  </div>
+                </td>
+                <td class="whitespace-nowrap px-6 py-4">
+                  <div class="text-sm text-gray-500">
+                    {new Date(post.frontmatter.date).toLocaleDateString()}
+                  </div>
+                </td>
+                <td class="whitespace-nowrap px-6 py-4 text-sm">
+                  <a
+                    href={`/admin/posts/edit/${post.file}`}
+                    class="text-primary hover:text-primary/80"
+                  >
+                    編輯
+                  </a>
+                </td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</AdminLayout>

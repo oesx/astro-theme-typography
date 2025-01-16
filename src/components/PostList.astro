@@ -1,0 +1,27 @@
+---
+import type { CollectionEntry } from 'astro:content'
+import PostPreview from './PostPreview.astro'
+import Pagination from './Pagination.astro'
+
+interface Props {
+  posts: CollectionEntry<'posts'>[]
+  page?: {
+    currentPage: number
+    size: number
+    total: number
+    url: {
+      current: string
+      next?: string
+      prev?: string
+    }
+  }
+}
+
+const { posts, page } = Astro.props
+---
+
+<div class="space-y-8">
+  {posts.map((post) => <PostPreview post={post} />)}
+</div>
+
+{page && <Pagination {...page} />}

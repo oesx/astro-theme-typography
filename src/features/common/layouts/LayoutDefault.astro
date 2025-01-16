@@ -1,0 +1,73 @@
+---
+import { themeConfig } from '@/core/.config'
+import SiteFooter from '@/components/SiteFooter.astro'
+import SiteNavigation from '@/components/SiteNavigation.astro'
+import SiteTitle from '@/components/SiteTitle.astro'
+import SiteSeo from '@/components/SiteSeo.astro'
+import LaTeX from '@/components/LaTeX.astro'
+import Analytics from '@/components/Analytics.astro'
+import ThemeScript from '@/components/ThemeScript.astro'
+
+interface Props {
+  title?: string
+  description?: string
+  image?: string
+  canonicalURL?: URL
+}
+
+const { title, description, image, canonicalURL } = Astro.props
+
+const { site, appearance } = themeConfig
+---
+
+<!DOCTYPE html>
+<html lang={appearance.locale}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <SiteSeo
+      title={title}
+      description={description}
+      image={image}
+      canonicalURL={canonicalURL}
+    />
+    <LaTeX />
+    <Analytics />
+    <ThemeScript />
+  </head>
+  <body class="min-h-screen bg-white text-gray-800 antialiased dark:bg-gray-900 dark:text-gray-200">
+    <div class="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8">
+      <header class="py-10">
+        <div class="flex flex-col items-center justify-between gap-4 sm:flex-row">
+          <SiteTitle />
+          <SiteNavigation />
+        </div>
+      </header>
+
+      <main class="min-h-screen py-8">
+        <slot />
+      </main>
+
+      <footer class="mt-20">
+        <SiteFooter />
+      </footer>
+    </div>
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    --font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+      Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    --font-family-mono: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas,
+      Liberation Mono, monospace;
+  }
+  html {
+    font-family: var(--font-family);
+  }
+  code {
+    font-family: var(--font-family-mono);
+  }
+</style>

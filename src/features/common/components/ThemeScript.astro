@@ -1,0 +1,28 @@
+---
+import { themeConfig } from "~/.config";
+
+const { theme } = themeConfig.appearance;
+const isDark = theme === "dark";
+
+---
+
+<script is:inline define:vars={{ isDark }}>
+  function applyTheme(dark) {
+    if (dark) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }
+
+  // On page load
+  applyTheme(isDark);
+
+  // On theme change
+  if (typeof window !== "undefined") {
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    mediaQuery.addEventListener("change", (e) => {
+      applyTheme(e.matches);
+    });
+  }
+</script>

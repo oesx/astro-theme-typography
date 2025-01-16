@@ -1,0 +1,43 @@
+---
+import LayoutDefault from '@/layouts/LayoutDefault.astro'
+import { getCollection } from 'astro:content'
+import { translate } from '@/i18n'
+
+const posts = await getCollection('posts', ({ data }) => {
+  return !data.draft
+})
+const postsByYear: Record<number, typeof posts> = {}
+
+posts.forEach(post => {
+  const year = new Date(post.data.pubDate).getFullYear()
+  if (!postsByYear[year]) {
+    postsByYear[year] = []
+  }
+  postsByYear[year].push(post)
+})
+
+const years = Object.keys(postsByYear).sort((a, b) => Number(b) - Number(a))
+---
+
+<LayoutDefault title={translate('archive.title')}>
+  <div class="mx-auto max-w-3xl px-4 space-y-8">
+    <h1 class="mb-8 text-2xl font-bold">归档</h1>
+    {years.map(year => (
+      <section>
+        <h2 class="text-2xl font-bold mb-4">{year}</h2>
+        <ul class="space-y-2">
+          {postsByYear[Number(year)].map(post => (
+            <li>
+              <a href={`/posts/${post.slug}`} class="hover:underline">
+                <span class="text-gray-500 mr-4">
+                  {new Date(post.data.pubDate).toLocaleDateString()}
+                </span>
+                {post.data.title}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))}
+  </div>
+</LayoutDefault>

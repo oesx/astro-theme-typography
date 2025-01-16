@@ -1,0 +1,27 @@
+---
+import type { CollectionEntry } from 'astro:content'
+import { formatDate } from '@/utils'
+
+interface Props {
+  post: CollectionEntry<'posts'>
+}
+
+const { post } = Astro.props
+const { title, description, pubDate, category } = post.data
+---
+
+<article class="group">
+  <a href={`/posts/${post.slug}`} class="not-underline-hover">
+    <div class="mb-2 flex items-center text-sm text-text/60">
+      <time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
+      {category && (
+        <>
+          <span class="mx-2">&middot;</span>
+          <span>{category}</span>
+        </>
+      )}
+    </div>
+    <h2 class="mb-2 text-xl font-bold">{title}</h2>
+    {description && <p class="text-text/80">{description}</p>}
+  </a>
+</article>

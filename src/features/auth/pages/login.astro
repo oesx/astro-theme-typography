@@ -1,0 +1,137 @@
+---
+import { themeConfig } from '~/.config'
+import LayoutDefault from '../../layouts/LayoutDefault.astro'
+import { getSession } from 'auth-astro/server'
+
+const session = await getSession(Astro.request)
+if (session) {
+  return Astro.redirect('/admin')
+}
+---
+
+<LayoutDefault>
+  <div class="flex min-h-[50vh] items-center justify-center">
+    <div class="w-full max-w-md">
+      <h1 class="mb-2 text-center text-3xl font-bold">{themeConfig.site.title}</h1>
+      <p class="mb-8 text-center text-gray-600">{themeConfig.site.subtitle}</p>
+      
+      <div class="space-y-6 rounded-lg bg-white/50 p-8 backdrop-blur-sm">
+        <div class="flex justify-center space-x-4">
+          <button
+            id="passkey-button"
+            class="inline-flex items-center rounded-md bg-primary px-6 py-3 text-white hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+          >
+            <svg class="mr-2 h-5 w-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-5-9h10v2H7z" fill="currentColor"/>
+            </svg>
+            使用 Passkey 登錄
+          </button>
+          <button
+            id="register-passkey-button"
+            class="inline-flex items-center rounded-md border border-primary bg-white px-6 py-3 text-primary hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+          >
+            <svg class="mr-2 h-5 w-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" fill="currentColor"/>
+            </svg>
+            註冊 Passkey
+          </button>
+        </div>
+
+        <div class="relative">
+          <div class="absolute inset-0 flex items-center">
+            <div class="w-full border-t border-gray-300"></div>
+          </div>
+          <div class="relative flex justify-center text-sm">
+            <span class="bg-white/50 px-2 text-gray-500">或者</span>
+          </div>
+        </div>
+
+        <form action="/api/auth/signin" method="post" class="space-y-4">
+          <div>
+            <label for="username" class="block text-sm font-medium text-gray-700">用戶名</label>
+            <input
+              type="text"
+              name="username"
+              id="username"
+              required
+              class="mt-1 block w-full rounded-md border border-gray-300 bg-white/50 px-3 py-2 shadow-sm backdrop-blur-sm focus:border-primary focus:outline-none focus:ring-primary sm:text-sm"
+            />
+          </div>
+          <div>
+            <label for="password" class="block text-sm font-medium text-gray-700">密碼</label>
+            <input
+              type="password"
+              name="password"
+              id="password"
+              required
+              class="mt-1 block w-full rounded-md border border-gray-300 bg-white/50 px-3 py-2 shadow-sm backdrop-blur-sm focus:border-primary focus:outline-none focus:ring-primary sm:text-sm"
+            />
+          </div>
+          <button
+            type="submit"
+            class="w-full rounded-md bg-gray-800 px-4 py-2 text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+          >
+            使用密碼登錄
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</LayoutDefault>
+
+<script>
+  import { startRegistration, startAuthentication } from '@simplewebauthn/browser'
+
+  const passkeyButton = document.getElementById('passkey-button')
+  const registerPasskeyButton = document.getElementById('register-passkey-button')
+  
+  async function authenticateWithPasskey() {
+    try {
+      const authOptions = await fetch('/api/auth/passkey/options').then(r => r.json())
+      const credential = await startAuthentication(authOptions)
+
+      const response = await fetch('/api/auth/passkey/verify', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(credential),
+      })
+
+      if (response.ok) {
+        window.location.href = '/admin'
+      }
+    }
+    catch (error) {
+      console.error('Passkey authentication failed:', error)
+    }
+  }
+
+  async function registerPasskey() {
+    try {
+      const regOptions = await fetch('/api/auth/passkey/register').then(r => r.json())
+      const credential = await startRegistration(regOptions)
+
+      const response = await fetch('/api/auth/passkey/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(credential),
+      })
+
+      if (response.ok) {
+        // eslint-disable-next-line no-alert
+        window.alert('Passkey 註冊成功！您現在可以使用 Passkey 登錄了。')
+      }
+    }
+    catch (error) {
+      console.error('Passkey registration failed:', error)
+      // eslint-disable-next-line no-alert
+      window.alert('Passkey 註冊失敗，請稍後重試。')
+    }
+  }
+
+  passkeyButton?.addEventListener('click', authenticateWithPasskey)
+  registerPasskeyButton?.addEventListener('click', registerPasskey)
+</script>

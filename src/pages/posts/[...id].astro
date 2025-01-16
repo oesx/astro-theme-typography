@@ -1,0 +1,146 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content'
+import LayoutDefault from '@/layouts/LayoutDefault.astro'
+import LayoutPost from '~/layouts/LayoutPost.astro'
+import Comments from '~/components/Comments.astro'
+import Pagination from '~/components/Pagination.astro'
+import SiteSeo from '~/components/SiteSeo.astro'
+import { themeConfig } from '@/config/default'
+import { t } from '@/i18n'
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts', ({ data }) => !data.draft)
+  return posts.map((post) => ({
+    params: { id: post.slug },
+    props: { post },
+  }))
+}
+
+interface Props {
+  post: CollectionEntry<'posts'>
+}
+
+const { post } = Astro.props
+const { Content } = await post.render()
+
+const { site } = themeConfig
+const title = `${post.data.title} - ${site.title}`
+const description = post.data.description || site.description
+
+// Get previous and next posts
+const posts = await getCollection('posts', ({ data }) => !data.draft)
+const sortedPosts = posts.sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+)
+const currentIndex = sortedPosts.findIndex((p) => p.slug === post.slug)
+const prevPost = currentIndex < sortedPosts.length - 1 ? sortedPosts[currentIndex + 1] : null
+const nextPost = currentIndex > 0 ? sortedPosts[currentIndex - 1] : null
+---
+
+<LayoutDefault>
+  <SiteSeo slot="head" {title} {description} />
+  <LayoutPost post={post}>
+    <Content />
+  </LayoutPost>
+  <div class="mt-8">
+    <Comments />
+  </div>
+  {
+    (prevPost || nextPost) && (
+      <nav class="mt-8 flex items-center justify-between">
+        {prevPost && (
+          <a
+            href={`/posts/${prevPost.slug}`}
+            class="group flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900"
+          >
+            <svg
+              class="h-5 w-5"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M18 10a.75.75 0 01-.75.75H4.66l2.1 1.95a.75.75 0 11-1.02 1.1l-3.5-3.25a.75.75 0 010-1.1l3.5-3.25a.75.75 0 111.02 1.1l-2.1 1.95h12.59A.75.75 0 0118 10z"
+                clip-rule="evenodd"
+              />
+            </svg>
+            {t('meta.previous')}
+          </a>
+        )}
+        {nextPost && (
+          <a
+            href={`/posts/${nextPost.slug}`}
+            class="group ml-auto flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900"
+          >
+            {t('meta.next')}
+            <svg
+              class="h-5 w-5"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M2 10a.75.75 0 01.75-.75h12.59l-2.1-1.95a.75.75 0 111.02-1.1l3.5 3.25a.75.75 0 010 1.1l-3.5 3.25a.75.75 0 11-1.02-1.1l2.1-1.95H2.75A.75.75 0 012 10z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          </a>
+        )}
+      </nav>
+    )
+  }
+</LayoutDefault>
+
+<script>
+  import '@github/clipboard-copy-element'
+
+  document.addEventListener('clipboard-copy', (event) => {
+    const target = event.target as HTMLElement
+    const icon = target.querySelector('.icon') as HTMLElement
+    icon.classList.replace('i-mdi-content-copy', 'i-mdi-check')
+    setTimeout(() => {
+      icon.classList.replace('i-mdi-check', 'i-mdi-content-copy')
+    }, 1500)
+  })
+
+  const codeBlocks = Array.from(document.querySelectorAll('pre'))
+  const icon = "<div class='i-mdi-content-copy icon text-white'></div>"
+  for (const codeBlock of codeBlocks) {
+    const wrapper = document.createElement('div')
+    wrapper.className = 'code-container'
+
+    const copyButton = document.createElement('clipboard-copy')
+    const code = codeBlock.querySelector('code')
+    copyButton.value = code?.textContent ?? ''
+    copyButton.className = 'clipboard-copy'
+    copyButton.innerHTML = icon
+
+    codeBlock.appendChild(copyButton)
+
+    codeBlock.parentNode?.insertBefore(wrapper, codeBlock)
+    wrapper.appendChild(codeBlock)
+  }
+</script>
+
+<style is:global>
+  .code-container {
+    position: relative;
+  }
+  .clipboard-copy {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    width: 1.75rem;
+    height: 1.75rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 0.25rem;
+  }
+
+  .clipboard-copy:hover {
+    background-color: #30363d;
+  }
+</style>

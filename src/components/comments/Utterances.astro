@@ -1,0 +1,30 @@
+---
+import { themeConfig } from '@/config/default'
+
+const { comment } = themeConfig
+const { utterances } = comment
+
+// Only render if repo is configured
+const isEnabled = !!utterances?.repo
+---
+
+{
+  isEnabled && (
+    <div class="utterances-frame">
+      <script
+        src="https://utteranc.es/client.js"
+        data-repo={utterances.repo}
+        data-issue-term="pathname"
+        data-theme="preferred-color-scheme"
+        crossorigin="anonymous"
+        async
+      />
+    </div>
+  )
+}
+
+<style>
+  .utterances-frame {
+    @apply w-full;
+  }
+</style>

@@ -1,0 +1,53 @@
+---
+import { themeConfig } from '@/core/.config'
+import { SEO } from 'astro-seo'
+
+interface Props {
+  title?: string
+  description?: string
+  image?: string
+  canonicalURL?: URL
+}
+
+const { title, description, image, canonicalURL } = Astro.props
+const { site } = themeConfig
+
+const siteTitle = title ? `${title} | ${site.title}` : site.title
+const siteDescription = description || site.description
+const siteImage = image || '/og-image.png'
+const siteURL = canonicalURL || Astro.url
+---
+
+<SEO
+  title={siteTitle}
+  description={siteDescription}
+  openGraph={{
+    basic: {
+      title: siteTitle,
+      type: 'website',
+      image: siteImage,
+    },
+    image: {
+      alt: siteTitle,
+    },
+    optional: {
+      description: siteDescription,
+      siteName: site.title,
+    },
+  }}
+  twitter={{
+    creator: site.author,
+    card: 'summary_large_image',
+  }}
+  extend={{
+    meta: [
+      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+      { name: 'generator', content: Astro.generator },
+    ],
+    link: [
+      { rel: 'icon', href: '/favicon.svg' },
+      { rel: 'sitemap', href: '/sitemap-index.xml' },
+      { rel: 'canonical', href: siteURL.href },
+    ],
+  }}
+/>

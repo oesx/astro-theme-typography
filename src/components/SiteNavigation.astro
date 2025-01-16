@@ -1,0 +1,22 @@
+---
+import { themeConfig } from '@/config/default'
+import { useTranslations } from '@/i18n'
+
+const t = useTranslations(Astro)
+const { navLinks } = themeConfig
+---
+
+<nav class="flex items-center justify-between">
+  <div class="flex items-center space-x-4">
+    {
+      navLinks.map(({ name, href }) => (
+        <a
+          href={href}
+          class="text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100"
+        >
+          {t(`nav.${name.toLowerCase()}`)}
+        </a>
+      ))
+    }
+  </div>
+</nav>

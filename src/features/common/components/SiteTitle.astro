@@ -1,0 +1,14 @@
+---
+import { themeConfig } from '~/.config'
+
+const { site } = themeConfig
+---
+
+<header>
+  <h1 class="text-2xl font-bold">
+    <a href="/" class="not-underline-hover">
+      {site.title}
+    </a>
+  </h1>
+  {site.description && <p class="mt-2 text-3">{site.description}</p>}
+</header>
