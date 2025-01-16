@@ -1,0 +1,28 @@
+---
+import PostMeta from '@/components/PostMeta.astro'
+import type { Post } from '@/types'
+
+interface Props {
+  posts: Post[]
+}
+
+const { posts } = Astro.props
+---
+
+<ul>
+  {
+    posts.map((post) => (
+      <li>
+        <article>
+          <h2>
+            <a href={`/posts/${post.slug}`}>{post.data.title}</a>
+          </h2>
+          <PostMeta post={post} />
+          {post.data.description && (
+            <p>{post.data.description}</p>
+          )}
+        </article>
+      </li>
+    ))
+  }
+</ul>

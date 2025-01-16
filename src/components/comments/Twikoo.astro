@@ -1,0 +1,32 @@
+---
+import { themeConfig } from '@/config/default'
+
+const { comment } = themeConfig
+const { twikoo } = comment
+
+// Only render if envId is configured
+const isEnabled = !!twikoo?.envId
+---
+
+{
+  isEnabled && (
+    <div id="twikoo" class="mt-10">
+      <script
+        src="https://cdn.jsdelivr.net/npm/twikoo@1.6.31/dist/twikoo.all.min.js"
+        define:vars={{ envId: twikoo.envId }}
+      >
+        window.twikooConfig = {
+          envId: envId,
+          el: '#twikoo',
+        }
+        twikoo.init(window.twikooConfig)
+      </script>
+    </div>
+  )
+}
+
+<style>
+  #twikoo {
+    @apply w-full;
+  }
+</style>

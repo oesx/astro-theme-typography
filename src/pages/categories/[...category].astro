@@ -1,0 +1,38 @@
+---
+import { getCollection } from 'astro:content'
+import Layout from '@/layouts/LayoutDefault.astro'
+import PostList from '@/components/PostList.astro'
+import Pagination from '@/components/Pagination.astro'
+import { LANGUAGES } from '@/i18n'
+
+export async function getStaticPaths({ paginate }) {
+  const posts = await getCollection('posts', ({ data }) => {
+    return !data.draft
+  })
+
+  const categories = [...new Set(posts.flatMap((post) => post.data.categories || []))]
+
+  return categories.flatMap((category) => {
+    const filteredPosts = posts.filter((post) => post.data.categories?.includes(category))
+    return paginate(filteredPosts, {
+      params: { category },
+      pageSize: 10,
+    })
+  })
+}
+
+const { category } = Astro.params
+const { page } = Astro.props
+const t = LANGUAGES['en']
+---
+
+<Layout title={`${t['Category']}: ${category}`}>
+  <div class="mx-auto max-w-3xl px-4">
+    <h1 class="mb-8 text-2xl font-bold">
+      {t['Category']}: {category}
+    </h1>
+
+    <PostList posts={page.data} />
+    <Pagination page={page} />
+  </div>
+</Layout>

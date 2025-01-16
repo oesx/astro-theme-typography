@@ -1,0 +1,19 @@
+---
+import { themeConfig } from '~/.config'
+
+interface Props {
+  category: string
+}
+
+const { category } = Astro.props
+
+function getCategoryUrl(category: string) {
+  const categoryPath = themeConfig.site.categoryMap[category] || category
+  return `/categories/${categoryPath}`
+}
+---
+
+<a href={getCategoryUrl(category)} class="not-underline-hover">
+  <span class="i-mdi-folder mr-1 h-4 w-4" />
+  <span>{category}</span>
+</a>

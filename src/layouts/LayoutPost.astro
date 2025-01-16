@@ -1,0 +1,51 @@
+---
+import type { CollectionEntry } from 'astro:content'
+import LayoutDefault from './LayoutDefault.astro'
+import PostMeta from '@/components/PostMeta.astro'
+import Comments from '@/components/Comments.astro'
+
+interface Props {
+  post: CollectionEntry<'posts'>
+  prev?: CollectionEntry<'posts'>
+  next?: CollectionEntry<'posts'>
+}
+
+const { post, prev, next } = Astro.props
+const { title, description } = post.data
+---
+
+<LayoutDefault title={title} description={description}>
+  <article class="prose prose-lg dark:prose-invert mx-auto">
+    <header class="mb-8">
+      <h1 class="text-4xl font-bold mb-4">{title}</h1>
+      <PostMeta post={post} />
+    </header>
+
+    <div class="mt-8">
+      <slot />
+    </div>
+
+    <footer class="mt-8 pt-8 border-t">
+      <nav class="flex justify-between">
+        {prev && (
+          <a href={`/posts/${prev.slug}`} class="group">
+            <div class="text-sm text-gray-500">Previous</div>
+            <div class="text-lg font-medium group-hover:text-gray-700 dark:group-hover:text-gray-300">
+              {prev.data.title}
+            </div>
+          </a>
+        )}
+        {next && (
+          <a href={`/posts/${next.slug}`} class="group ml-auto text-right">
+            <div class="text-sm text-gray-500">Next</div>
+            <div class="text-lg font-medium group-hover:text-gray-700 dark:group-hover:text-gray-300">
+              {next.data.title}
+            </div>
+          </a>
+        )}
+      </nav>
+    </footer>
+  </article>
+
+  <Comments />
+</LayoutDefault>

@@ -1,0 +1,55 @@
+---
+import { themeConfig } from '@/core/.config'
+
+const { site } = themeConfig
+const { navLinks } = site
+const { translate: t } = Astro.locals
+const socialLinks = site.socialLinks
+
+interface NavItem {
+  name: string
+  href: string
+}
+
+function renderNavItem({ name, href }: NavItem) {
+  const isActive = Astro.url.pathname === href
+  return (
+    <li>
+      <a
+        href={href}
+        class:list={[
+          'block py-2 px-3 rounded-lg',
+          isActive
+            ? 'bg-gray-100 dark:bg-gray-700'
+            : 'hover:bg-gray-100 dark:hover:bg-gray-700',
+        ]}
+      >
+        {t(name)}
+      </a>
+    </li>
+  )
+}
+---
+
+<nav class="text-center font-bold" flex="~ col gap-4">
+  <ul lg="flex-col items-start text-4" class="text-3.5" flex="~ row gap-2 justify-center">
+    {navLinks.map(renderNavItem)}
+  </ul>
+  <ul flex="~ row gap-1 justify-center">
+    {
+      socialLinks.map(({ href, name }: { href: string; name: string }) => (
+        <li>
+          <a href={href} target="_blank" title={name} class="not-underline-hover inline-flex items-center">
+            <span class:list={[`i-mdi-${name}`, 'w-6 h-6']}>{name}</span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</nav>
+
+<nav class="mt-8">
+  <ul class="flex gap-4">
+    {navLinks.map(renderNavItem)}
+  </ul>
+</nav>

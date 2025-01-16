@@ -1,0 +1,45 @@
+---
+import { themeConfig } from '@/config/default'
+
+interface Analytics {
+  googleAnalyticsId?: string
+  umamiAnalyticsId?: string
+}
+
+const analytics: Analytics = {
+  googleAnalyticsId: import.meta.env.GOOGLE_ANALYTICS_ID,
+  umamiAnalyticsId: import.meta.env.UMAMI_ANALYTICS_ID,
+}
+
+const { googleAnalyticsId, umamiAnalyticsId } = analytics
+---
+
+{
+  googleAnalyticsId && (
+    <>
+      <script
+        type="text/partytown"
+        src={`https://www.googletagmanager.com/gtag/js?id=${googleAnalyticsId}`}
+      />
+      <script type="text/partytown" define:vars={{ googleAnalyticsId }}>
+        window.dataLayer = window.dataLayer || []
+        function gtag() {
+          dataLayer.push(arguments)
+        }
+        gtag('js', new Date())
+        gtag('config', googleAnalyticsId)
+      </script>
+    </>
+  )
+}
+
+{
+  umamiAnalyticsId && (
+    <script
+      async
+      defer
+      data-website-id={umamiAnalyticsId}
+      src="https://analytics.umami.is/script.js"
+    />
+  )
+}

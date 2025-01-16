@@ -1,0 +1,49 @@
+---
+import { themeConfig } from '@/config/default'
+import Disqus from './comments/Disqus.astro'
+import Giscus from './comments/Giscus.astro'
+import Utterances from './comments/Utterances.astro'
+import Twikoo from './comments/Twikoo.astro'
+
+interface Props {
+  url?: string
+  title?: string
+  id?: string
+}
+
+const { url, title, id } = Astro.props
+const { comment } = themeConfig
+
+const hasDisqus = comment.disqus
+const hasGiscus = comment.giscus
+const hasUtterances = comment.utterances
+const hasTwikoo = comment.twikoo
+
+---
+
+<div class="mt-16">
+  {
+    hasDisqus && (
+      <Disqus
+        url={url}
+        title={title}
+        id={id}
+      />
+    )
+  }
+  {
+    hasGiscus && (
+      <Giscus />
+    )
+  }
+  {
+    hasUtterances && (
+      <Utterances />
+    )
+  }
+  {
+    hasTwikoo && (
+      <Twikoo />
+    )
+  }
+</div>

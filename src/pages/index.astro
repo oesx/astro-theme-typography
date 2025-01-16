@@ -1,0 +1,35 @@
+---
+import { getCollection } from 'astro:content'
+import Layout from '@/layouts/LayoutDefault.astro'
+import PostList from '@/components/PostList.astro'
+import { config } from '../../.config/user'
+
+const posts = await getCollection('posts', ({ data }) => {
+  return !data.draft
+})
+
+posts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+
+const title = config.site.title
+const description = config.site.description
+const pageSize = 10
+const totalPages = Math.ceil(posts.length / pageSize)
+const currentPage = 1
+
+const paginatedPosts = posts.slice(0, pageSize)
+---
+
+<Layout title={title} description={description}>
+  <PostList
+    posts={paginatedPosts}
+    page={{
+      currentPage,
+      size: pageSize,
+      total: posts.length,
+      url: {
+        current: '/',
+        next: totalPages > 1 ? '/page/2' : undefined,
+      },
+    }}
+  />
+</Layout>

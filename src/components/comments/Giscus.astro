@@ -1,0 +1,27 @@
+---
+import { themeConfig } from '@/config/default'
+
+const { comment } = themeConfig
+const { giscus } = comment
+
+if (!giscus) {
+  throw new Error('Giscus configuration is missing')
+}
+---
+
+{
+  <script
+    src="https://giscus.app/client.js"
+    data-repo={giscus.repo}
+    data-repo-id={giscus.repoId}
+    data-category={giscus.category}
+    data-category-id={giscus.categoryId}
+    data-reactions-enabled={giscus.reactionsEnabled ? '1' : '0'}
+    data-emit-metadata={giscus.emitMetadata ? '1' : '0'}
+    data-input-position={giscus.inputPosition}
+    data-lang={giscus.lang}
+    data-theme="light"
+    crossorigin="anonymous"
+    async
+  />
+}

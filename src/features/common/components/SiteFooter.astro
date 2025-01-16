@@ -1,0 +1,28 @@
+---
+import { themeConfig } from '~/.config'
+
+const currentYear = new Date().getFullYear()
+const { website, author, copyright } = themeConfig.site
+
+function parseFooter(str: string) {
+  str = str.replace(/%author/g, author)
+  str = str.replace(/%website/g, website)
+  str = str.replace(/%year/g, currentYear.toString())
+  return str
+}
+---
+
+<footer class="mt-8 border-t py-8 text-center text-3">
+  {copyright && <p>&copy; {currentYear} {parseFooter(copyright)}</p>}
+  <p class="mt-2">
+    <a href="https://github.com/chuenwei0129/astro-theme-typography" target="_blank" rel="noopener noreferrer">
+      Built with Astro Typography Theme
+    </a>
+  </p>
+</footer>
+
+<style>
+  p {
+    --at-apply: 'font-bold text-3';
+  }
+</style>
