@@ -16,7 +16,7 @@
 
 ## About This Project
 
-This project is an improved and optimized version of [astro-theme-typography](https://github.com/Moeyua/astro-theme-typography) by [moeyua](https://github.com/Moeyua). We have added the following features:
+This project is an improved and optimized version of [astro-theme-typography](https://github.com/oesx/astro-theme-typography) by [oesx](https://github.com/oesx). We have added the following features:
 
 - Secure admin dashboard
 - WebAuthn (Passkey) support
@@ -43,11 +43,6 @@ This project is an improved and optimized version of [astro-theme-typography](ht
 ## Demo
 
 > Submit a PR to add your blog Demo.
-
-- [Live Demo](https://astro-theme-typography.vercel.app/)
-- [My Blog](https://blog.moeyua.com/)
-- [Julyfun's Blog (how to fully build this blog using `bun` in minutes)](https://julyfun.fun/posts/%E5%85%89%E9%80%9F%E6%90%AD%E5%BB%BA%E8%BF%99%E6%A0%B7%E4%B8%80%E4%B8%AA%E5%8D%9A%E5%AE%A2/)
-- [Jinx's Blog](https://blog.mytest.cc/)
 
 ## Getting Started
 
@@ -97,7 +92,7 @@ Typography has built-in support for adding links to your social media accounts t
 socials: [
   {
     name: 'github',
-    href: 'https://github.com/moeyua/astro-theme-typography'
+    href: 'https://github.com/oesx/astro-theme-typography'
   }
 ]
 ```
@@ -180,7 +175,7 @@ You can enable Giscus by adding the following configuration to the config file:
 {
   comments: {
     giscus: {
-      repo: 'moeyua/astro-theme-typography'
+      repo: 'oesx/astro-theme-typography'
       repoId: 'R_kgDOKy9HOQ'
       category: 'General'
       categoryId: 'DIC_kwDOKy9HOc4CegmW'
@@ -210,6 +205,63 @@ You can enable Twikoo by adding the following configuration to the config file:
   }
 }
 ```
+
+## WebAuthn (Passkey) Configuration
+
+Typography supports WebAuthn (Passkey) for secure authentication. To configure WebAuthn, add the following environment variables to your `.env` file:
+
+```env
+WEBAUTHN_RP_ID=your-domain.com
+WEBAUTHN_RP_NAME=Your Site Name
+WEBAUTHN_ORIGIN=https://your-domain.com
+```
+
+These variables are used to configure the WebAuthn Relying Party:
+
+- `WEBAUTHN_RP_ID`: The domain name of your site (e.g., 'blog.example.com')
+- `WEBAUTHN_RP_NAME`: The name of your site that will be shown in the WebAuthn dialog
+- `WEBAUTHN_ORIGIN`: The full origin of your site (e.g., 'https://blog.example.com')
+
+For development, you can use these default values:
+
+```env
+WEBAUTHN_RP_ID=localhost
+WEBAUTHN_RP_NAME=Typography Blog
+WEBAUTHN_ORIGIN=http://localhost:3000
+```
+
+Note: WebAuthn requires HTTPS in production. Make sure your site is served over HTTPS before enabling WebAuthn.
+
+To register a new passkey:
+
+1. Visit `/auth/register` on your site
+2. Follow the browser's prompts to create a new passkey
+3. Your passkey will be stored securely and can be used for future logins
+
+To login with a passkey:
+
+1. Visit `/auth/login` on your site
+2. Click "Use Passkey"
+3. Follow the browser's prompts to authenticate
+
+For enhanced security, consider also configuring these optional environment variables:
+
+```env
+AUTH_SECRET=your-auth-secret # Required for session management
+GITHUB_ID=your-github-oauth-id # Optional: Enable GitHub OAuth login
+GITHUB_SECRET=your-github-oauth-secret
+```
+
+### Security Considerations
+
+When deploying to production:
+
+1. Always use HTTPS
+2. Set a strong AUTH_SECRET
+3. Configure proper CORS settings
+4. Keep your environment variables secure
+5. Regularly backup your authenticator data
+6. Monitor authentication attempts for suspicious activity
 
 ## Pagespeed Score
 
