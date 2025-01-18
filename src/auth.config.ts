@@ -1,52 +1,13 @@
 import type { AuthConfig } from '@auth/core'
-import Credentials from '@auth/core/providers/credentials'
-import { themeConfig } from '@/config/default'
+import GitHub from '@auth/core/providers/github'
 
-export const authConfig: AuthConfig = {
+export default {
   providers: [
-    Credentials({
-      credentials: {
-        username: { label: 'Username', type: 'text' },
-        password: { label: 'Password', type: 'password' },
-      },
-      async authorize(credentials) {
-        if (!credentials?.username || !credentials?.password) return null
-
-        const { username, password } = credentials
-        const { admin } = themeConfig
-
-        if (admin && username === admin.username && password === admin.password) {
-          return {
-            id: '1',
-            name: admin.username,
-            email: `${admin.username}@example.com`,
-          }
-        }
-
-        return null
-      },
+    GitHub({
+      clientId: process.env.GITHUB_CLIENT_ID,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET,
     }),
   ],
-  callbacks: {
-    async signIn() {
-      return true
-    },
-    async session({ session, token }) {
-      if (token && session.user) {
-        session.user.id = token.sub as string
-      }
-      return session
-    },
-    async jwt({ token, user }) {
-      if (user) {
-        token.sub = user.id
-      }
-      return token
-    },
-  },
-  pages: {
-    signIn: '/auth/login',
-  },
-  secret: process.env.AUTH_SECRET || 'your-secret-key',
   trustHost: true,
-}
+  secret: process.env.AUTH_SECRET,
+} satisfies AuthConfig
